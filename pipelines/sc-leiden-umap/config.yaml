@@ -1,0 +1,52 @@
+# Single-cell downstream analysis pipeline configuration
+
+# Input h5ad file (relative to /input mount point)
+input_h5ad: "/input/10k.h5ad"
+
+# Output directory
+output_dir: "/output"
+
+# --- Preprocessing ---
+# Whether to run basic preprocessing (normalize, log1p, HVG, scale, PCA)
+run_preprocessing: true
+
+# Number of highly variable genes to select
+n_top_genes: 2000
+
+# Number of principal components to compute
+n_pcs: 50
+
+# --- Neighborhood Graph ---
+# Number of neighbors for computing the neighborhood graph
+n_neighbors: 15
+
+# --- Leiden Clustering ---
+# Resolution parameter for Leiden clustering (higher = more clusters)
+leiden_resolution: 1.0
+
+# --- UMAP ---
+# Minimum distance for UMAP embedding
+umap_min_dist: 0.5
+
+# --- DEG Analysis ---
+# Column in adata.obs to group cells by (default: leiden clusters)
+deg_groupby: "leiden"
+
+# Statistical method for DEG testing: wilcoxon, t-test, t-test_overestim_var, logreg
+deg_method: "wilcoxon"
+
+# Number of top DEGs to report per cluster
+deg_n_genes: 25
+
+# --- Volcano Plot ---
+# Log2 fold change threshold for significance coloring
+volcano_logfc_threshold: 1.0
+
+# Adjusted p-value threshold for significance
+volcano_pval_threshold: 0.05
+
+# Number of top significant genes to label per cluster
+volcano_top_n_label: 5
+
+# Random seed for reproducibility
+random_seed: 42

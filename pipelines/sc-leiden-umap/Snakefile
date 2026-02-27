@@ -1,0 +1,91 @@
+configfile: "config.yaml"
+
+rule all:
+    input:
+        config["output_dir"] + "/umap_leiden.png",
+        config["output_dir"] + "/leiden_clusters.csv",
+        config["output_dir"] + "/processed.h5ad",
+        config["output_dir"] + "/deg_markers.csv",
+        config["output_dir"] + "/deg_dotplot.png",
+        config["output_dir"] + "/deg_analysis.h5ad",
+        config["output_dir"] + "/volcano_plot.png"
+
+rule preprocess:
+    """Preprocess the h5ad file: normalize, log-transform, find HVGs, scale, and run PCA."""
+    input:
+        h5ad=config["input_h5ad"]
+    output:
+        h5ad=config["output_dir"] + "/preprocessed.h5ad"
+    params:
+        n_top_genes=config.get("n_top_genes", 2000),
+        n_pcs=config.get("n_pcs", 50),
+        run_preprocessing=config.get("run_preprocessing", True),
+        random_seed=config.get("random_seed", 42)
+    log:
+        config["output_dir"] + "/logs/preprocess.log"
+    script:
+        "scripts/preprocess.py"
+
+rule leiden_cluster:
+    """Compute neighborhood graph and run Leiden clustering."""
+    input:
+        h5ad=rules.preprocess.output.h5ad
+    output:
+        h5ad=config["output_dir"] + "/clustered.h5ad",
+        csv=config["output_dir"] + "/leiden_clusters.csv"
+    params:
+        n_neighbors=config.get("n_neighbors", 15),
+        n_pcs=config.get("n_pcs", 50),
+        leiden_resolution=config.get("leiden_resolution", 1.0),
+        random_seed=config.get("random_seed", 42)
+    log:
+        config["output_dir"] + "/logs/leiden_cluster.log"
+    script:
+        "scripts/leiden_cluster.py"
+
+rule umap_plot:
+    """Compute UMAP embedding and generate visualization colored by Leiden clusters."""
+    input:
+        h5ad=rules.leiden_cluster.output.h5ad
+    output:
+        h5ad=config["output_dir"] + "/processed.h5ad",
+        png=config["output_dir"] + "/umap_leiden.png"
+    params:
+        umap_min_dist=config.get("umap_min_dist", 0.5),
+        random_seed=config.get("random_seed", 42)
+    log:
+        config["output_dir"] + "/logs/umap_plot.log"
+    script:
+        "scripts/umap_plot.py"
+
+rule deg_analysis:
+    """Run differential expression gene (DEG) analysis across Leiden clusters using rank_genes_groups."""
+    input:
+        h5ad=rules.umap_plot.output.h5ad
+    output:
+        h5ad=config["output_dir"] + "/deg_analysis.h5ad",
+        csv=config["output_dir"] + "/deg_markers.csv",
+        png=config["output_dir"] + "/deg_dotplot.png"
+    params:
+        groupby=config.get("deg_groupby", "leiden"),
+        method=config.get("deg_method", "wilcoxon"),
+        n_genes=config.get("deg_n_genes", 25)
+    log:
+        config["output_dir"] + "/logs/deg_analysis.log"
+    script:
+        "scripts/deg_analysis.py"
+
+rule volcano_plot:
+    """Generate volcano plots for each cluster showing log2 fold change vs significance."""
+    input:
+        csv=rules.deg_analysis.output.csv
+    output:
+        png=config["output_dir"] + "/volcano_plot.png"
+    params:
+        logfc_threshold=config.get("volcano_logfc_threshold", 1.0),
+        pval_threshold=config.get("volcano_pval_threshold", 0.05),
+        top_n_label=config.get("volcano_top_n_label", 5)
+    log:
+        config["output_dir"] + "/logs/volcano_plot.log"
+    script:
+        "scripts/volcano_plot.py"

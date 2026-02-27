@@ -1,0 +1,46 @@
+{
+  "author": "",
+  "created_at": "2026-02-26",
+  "description": "Single-cell RNA-seq downstream analysis pipeline that performs preprocessing (normalization, HVG selection, PCA), Leiden clustering, UMAP visualization, differential expression gene (DEG) analysis, and volcano plot visualization from an h5ad input file using Scanpy.",
+  "input_formats": [
+    "h5ad"
+  ],
+  "name": "sc-leiden-umap",
+  "output_formats": [
+    "h5ad",
+    "png",
+    "csv"
+  ],
+  "parameters": {
+    "deg_groupby": "Column to group cells by for DEG analysis",
+    "deg_method": "Statistical method for DEG testing (wilcoxon, t-test, logreg)",
+    "deg_n_genes": "Number of top DEGs per cluster",
+    "leiden_resolution": "Resolution parameter for Leiden clustering",
+    "n_neighbors": "Number of neighbors for neighborhood graph",
+    "n_pcs": "Number of principal components",
+    "n_top_genes": "Number of highly variable genes to select",
+    "umap_min_dist": "Minimum distance for UMAP embedding",
+    "volcano_logfc_threshold": "Log2 fold change threshold for volcano plot",
+    "volcano_pval_threshold": "Adjusted p-value threshold for volcano plot",
+    "volcano_top_n_label": "Number of top genes to label on volcano plot"
+  },
+  "tags": [
+    "single-cell",
+    "scRNA-seq",
+    "leiden",
+    "umap",
+    "clustering",
+    "scanpy",
+    "visualization",
+    "DEG",
+    "differential-expression",
+    "marker-genes",
+    "volcano-plot"
+  ],
+  "tools": [
+    "scanpy",
+    "leidenalg"
+  ],
+  "verified": false,
+  "version": "1.2.0"
+}
