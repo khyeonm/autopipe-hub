@@ -1,0 +1,30 @@
+{
+  "author": "",
+  "category": "file-conversion",
+  "dependencies": [
+    "Pillow",
+    "fpdf2"
+  ],
+  "description": "Convert one or more image files (PNG, JPG, JPEG, TIFF, BMP, GIF) into a single PDF document. Supports combining multiple images into one PDF with automatic page sizing to match image dimensions.",
+  "input_types": [
+    "png",
+    "jpg",
+    "jpeg",
+    "tiff",
+    "bmp",
+    "gif"
+  ],
+  "name": "image-to-pdf",
+  "tags": [
+    "image",
+    "pdf",
+    "conversion",
+    "png",
+    "jpg",
+    "tiff",
+    "combine",
+    "document"
+  ],
+  "usage": "python run.py <image_path_or_directory> [--output output.pdf] [--dpi 300]",
+  "version": "1.0.0"
+}
