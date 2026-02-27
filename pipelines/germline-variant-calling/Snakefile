@@ -1,0 +1,38 @@
+configfile: "config.yaml"
+
+SAMPLES = list(config["samples"].keys())
+OUTPUT_DIR = config.get("output_dir", "/output")
+
+
+rule all:
+    input:
+        expand(OUTPUT_DIR + "/{sample}.vcf.gz", sample=SAMPLES),
+        expand(OUTPUT_DIR + "/{sample}.vcf.gz.tbi", sample=SAMPLES),
+
+
+# =============================================================================
+# Step 1: Call germline variants with HaplotypeCaller
+# =============================================================================
+rule haplotype_caller:
+    """Call germline SNPs and indels via local re-assembly of haplotypes."""
+    input:
+        bam=lambda wc: config["samples"][wc.sample]["bam"],
+        ref=config["reference"],
+    output:
+        vcf=OUTPUT_DIR + "/{sample}.vcf.gz",
+        idx=OUTPUT_DIR + "/{sample}.vcf.gz.tbi",
+    threads: config["threads"]
+    log:
+        "logs/{sample}_haplotypecaller.log",
+    params:
+        erc=config["haplotype_caller"]["emit_ref_confidence"],
+        extra=config["haplotype_caller"].get("extra", ""),
+    shell:
+        "gatk --java-options '-Xmx32g' HaplotypeCaller "
+        "-R {input.ref} "
+        "-I {input.bam} "
+        "-O {output.vcf} "
+        "-ERC {params.erc} "
+        "--native-pair-hmm-threads {threads} "
+        "{params.extra} "
+        "2> {log}"

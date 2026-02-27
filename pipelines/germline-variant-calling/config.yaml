@@ -1,0 +1,23 @@
+# =============================================================================
+# Germline Variant Calling Pipeline - GATK HaplotypeCaller
+# Input: BAM -> Output: VCF
+# =============================================================================
+
+# -- Samples (REQUIRED) --
+samples:
+  NA12891:
+    bam: "/input/NA12891_S1.bam"
+
+# -- Reference Genome (REQUIRED) --
+reference: "/ref/hg19_human.fa"
+
+# -- Output Directory --
+output_dir: "/output"
+
+# -- HaplotypeCaller Parameters --
+haplotype_caller:
+  emit_ref_confidence: "NONE"   # NONE for VCF, GVCF for gVCF mode
+  extra: ""
+
+# -- Resource Allocation --
+threads: 8

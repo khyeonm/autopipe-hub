@@ -1,0 +1,25 @@
+{
+  "created_at": "2026-02-23",
+  "description": "Germline variant calling pipeline using GATK HaplotypeCaller. Processes aligned BAM files to produce VCF files containing SNPs and indels.",
+  "input_formats": [
+    "BAM"
+  ],
+  "name": "germline-variant-calling",
+  "output_formats": [
+    "VCF"
+  ],
+  "tags": [
+    "germline",
+    "variant-calling",
+    "haplotypecaller",
+    "gatk",
+    "snp",
+    "indel"
+  ],
+  "tools": [
+    "gatk4",
+    "samtools"
+  ],
+  "verified": false,
+  "version": "1.0.0"
+}
